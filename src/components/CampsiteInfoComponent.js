@@ -29,9 +29,10 @@ class CommentForm extends React.Component {
 			text: '',
 			touched: {
 				author: false,
-			},
+			}
 		};
 		this.toggleModal = this.toggleModal.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	toggleModal() {
@@ -40,13 +41,18 @@ class CommentForm extends React.Component {
 		});
 	}
 
+  handleSubmit(values) {
+    console.log('Current state is: ' + JSON.stringify(values));
+    alert('Current state is: ' + JSON.stringify(values));
+}
+
 	render() {
 		return (
 			<React.Fragment>
 				<Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
 					<ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
 					<ModalBody>
-						<LocalForm>
+						<LocalForm onSubmit={values => this.handleSubmit(values)}>
 							<div className="form-group">
 								<Label htmlFor="rating">Rating</Label>
 								<Control.select
@@ -125,7 +131,7 @@ function RenderCampsite({ campsite }) {
 	);
 }
 
-function RenderComments({ comments }) {
+function RenderComments({comments, addComment, campsiteId}) {
 	if (comments) {
 		return (
 			<div className="col-md-5 m-1">
@@ -141,7 +147,7 @@ function RenderComments({ comments }) {
 						}).format(new Date(Date.parse(comment.date)))}
 					</p>
 				))}
-				<CommentForm />
+				<CommentForm campsiteId={campsiteId} addComment={addComment} />
 			</div>
 		);
 	}
@@ -166,7 +172,11 @@ function CampsiteInfo(props) {
 				</div>
 				<div className="row">
 					<RenderCampsite campsite={props.campsite} />
-					<RenderComments comments={props.comments} />
+					<RenderComments 
+              comments={props.comments}
+              addComment={props.addComment}
+              campsiteId={props.campsite.id}
+          />
 				</div>
 			</div>
 		);
